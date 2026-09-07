@@ -1,0 +1,11 @@
+{
+  "rules": {
+    "questions": {
+      ".read": true,
+      ".write": true,
+      "$questionId": {
+        ".validate": "newData.hasChildren(['text','timestamp','sessionId']) && newData.child('text').isString() && newData.child('text').val().length <= 300"
+      }
+    }
+  }
+}

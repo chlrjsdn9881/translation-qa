@@ -1,0 +1,99 @@
+.app {
+  max-width: 640px;
+  margin: 40px auto;
+  padding: 0 16px;
+  font-family: system-ui, sans-serif;
+}
+
+.mode-switch {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.mode-switch button {
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  background: #f4f4f4;
+  cursor: pointer;
+}
+.mode-switch button.active {
+  background: #2f5fdb;
+  color: #fff;
+  border-color: #2f5fdb;
+}
+
+.view textarea {
+  width: 100%;
+  font-size: 15px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+.view .counter {
+  font-size: 12px;
+  color: #666;
+  text-align: right;
+  margin: 4px 0;
+}
+.view button {
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.view .sent-feedback {
+  color: #1a6b2a;
+  font-size: 13px;
+}
+.view .warn {
+  color: #a3231f;
+  font-size: 13px;
+}
+.view .hint {
+  color: #666;
+  font-size: 13px;
+}
+
+.question-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0;
+}
+.question-list li {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+.question-list li:hover {
+  background: #fafafa;
+}
+.question-list .original {
+  font-size: 14px;
+}
+.question-list .loading {
+  font-size: 12px;
+  color: #888;
+}
+.question-list .error {
+  font-size: 12px;
+  color: #a3231f;
+}
+.question-list .result {
+  margin-top: 6px;
+  border-top: 1px dashed #ddd;
+  padding-top: 6px;
+}
+.question-list .translated {
+  font-size: 14px;
+  font-weight: 600;
+}
+.question-list .keywords {
+  font-size: 12px;
+  color: #2f5fdb;
+  margin-top: 2px;
+}
+.question-list .empty {
+  color: #999;
+  font-size: 13px;
+  border: none;
+}
