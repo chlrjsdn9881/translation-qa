@@ -1,51 +1,31 @@
-# 번역 Q&A 프로토타입 (하이브리드 구조)
+# Hybrid Translation Q&A
 
-학생이 모국어로 질문을 보내면 강의자 화면에 실시간으로 뜨고, 더블클릭하면 Chrome 내장 AI로
-번역 + 핵심 키워드 1~2개가 표시되는 프로토타입입니다. 백엔드 서버 없이 Firebase Realtime DB(중계) +
-Chrome 내장 AI(번역·요약, 강의자 PC 로컬)로 구성됩니다.
+강의 중 학생의 익명 질문을 Firebase Realtime Database로 실시간 전달하고, 강사 화면에서 한국어 번역과 핵심 키워드를 확인하는 React/Vite 앱입니다.
 
-## 처음 세팅하는 법
+`lecture-translation-client`의 학생·강사 UI, Chrome AI 우선 처리와 온라인 번역 대체 로직을 `translation-qa` 저장소로 통합했습니다.
 
-1. **Firebase 프로젝트 준비**
-   - https://console.firebase.google.com 에서 프로젝트 생성
-   - Build → Realtime Database 생성
-   - 프로젝트 설정 → 일반 → 앱 추가(웹) 에서 나오는 설정값을 `src/services/firebaseConfig.js`에 붙여넣기
-   - Realtime Database → 규칙 탭에 이 저장소의 `firebase.rules.json` 내용을 붙여넣고 게시
+## 시작하기
 
-2. **패키지 설치 및 실행**
-   ```
-   npm install
-   npm run dev
-   ```
+1. `.env.example`을 `.env`로 복사하고 Firebase 웹 앱 설정값을 입력합니다.
+2. Firebase Realtime Database를 만들고 `firebase.rules.json`의 규칙을 배포합니다.
+3. 의존성을 설치하고 실행합니다.
 
-3. **Chrome 내장 AI 확인** (강의자 화면 테스트용 PC에서)
-   - 최신 Chrome 필요
-   - 주소창에 `chrome://on-device-internals` 입력해서 모델 상태 확인
-   - 안 되면 `chrome://flags` 에서 `optimization guide`, `prompt api` 로 검색해서 관련 옵션 활성화 후 재시작
-
-## 구조
-
-```
-src/
-  services/
-    firebaseConfig.js   — Firebase 프로젝트 연결 정보 (직접 채워넣어야 함)
-    questionRepository.js — 학생↔강의자 질문 데이터 송수신 (리포지토리 패턴)
-    translator.js        — Chrome 내장 AI로 번역 + 키워드 추출
-  StudentView.jsx        — 학생 화면 (질문 입력)
-  LecturerView.jsx       — 강의자 화면 (질문 목록 + 번역)
-  App.jsx                — 화면 전환(프로토타입용 — 실제로는 URL/역할로 분리 예정)
+```bash
+npm install
+npm run dev
 ```
 
-## 배포 (Vercel)
+프로덕션 빌드는 다음과 같습니다.
 
+```bash
+npm run build
 ```
-npm install -g vercel
-vercel
-```
-루트 디렉토리 그대로 두고 프레임워크 프리셋은 Vite로 자동 인식됩니다.
 
-## 아직 미해결
+## 구성
 
-- 강의자 답변을 학생 언어로 재번역하는 기능 없음 (범위 밖)
-- 학생 구분: 완전 익명 vs 익명 태그 — 미정 (`sessionId`만 저장 중)
-- 연속 전송 쿨타임: 현재 미구현 — Security Rules 또는 클라이언트에서 추가 필요
+- 학생 화면: 최대 300자의 익명 질문 전송
+- 강사 화면: 실시간 질문 목록, 선택·번역·키워드 확인
+- 번역: Chrome 내장 AI를 우선 사용하고, 사용할 수 없으면 MyMemory 번역 API로 대체
+- 데이터 전달: Firebase Realtime Database
+
+`.env`에는 Firebase 설정이 포함될 수 있으므로 Git에 올리지 않습니다. 공유가 필요한 설정 키 목록은 `.env.example`에 있습니다.
