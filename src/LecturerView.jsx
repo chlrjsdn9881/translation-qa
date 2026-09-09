@@ -84,8 +84,11 @@ export default function LecturerPage() {
   useEffect(() => {
     const unsubscribe =
       subscribeToQuestions(
-        (newQuestions) => {
-          setQuestions(newQuestions);
+        (newQuestion) => {
+          setQuestions((currentQuestions) => [
+            ...currentQuestions,
+            newQuestion,
+          ]);
         }
       );
 
