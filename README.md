@@ -43,12 +43,10 @@ src/
 
 ## 배포 (Vercel)
 
-```
-npm install -g vercel
-vercel
-```
-루트 디렉토리 그대로 두고 프레임워크 프리셋은 Vite로 자동 인식됩니다.
-Vercel 프로젝트 설정 → Environment Variables 에 `VITE_GEMINI_API_KEY` 추가 필요.
+현재 배포 주소: https://translation-qa-chi.vercel.app
+
+GitHub 저장소 연결 후 Vercel이 Vite로 자동 인식해서 배포됩니다.
+Vercel 프로젝트 설정 → Environment Variables 에 `VITE_GEMINI_API_KEY` 추가 필요 (재배포해야 반영됨).
 
 ## 아직 미해결
 
