@@ -1,5 +1,5 @@
 import { db } from './firebaseConfig';
-import { ref, push, onChildAdded, serverTimestamp, query, limitToLast } from 'firebase/database';
+import { ref, push, remove, onChildAdded, serverTimestamp, query, limitToLast } from 'firebase/database';
 
 const QUESTIONS_PATH = 'questions';
 const MAX_LENGTH = 300;
@@ -33,6 +33,16 @@ export function subscribeToQuestions(callback) {
     callback({ id: snapshot.key, ...snapshot.val() });
   });
   return unsubscribe; // 화면이 사라질 때 unsubscribe() 호출해서 구독 해제
+}
+
+// 강의자 화면에서 호출 — 질문 하나 삭제
+export async function deleteQuestion(id) {
+  await remove(ref(db, `${QUESTIONS_PATH}/${id}`));
+}
+
+// 강의자 화면에서 호출 — 질문 전체 삭제
+export async function clearAllQuestions() {
+  await remove(ref(db, QUESTIONS_PATH));
 }
 
 export const QUESTION_MAX_LENGTH = MAX_LENGTH;
