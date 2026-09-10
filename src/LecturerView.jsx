@@ -35,7 +35,10 @@ export default function LecturerView() {
           const r = results[q.id];
           return (
             <li key={q.id} onDoubleClick={() => handleDoubleClick(q)}>
-              <div className="original">{q.text}</div>
+              <div className="original">
+                <span className="student-name">{q.name || '익명'}</span>
+                {q.text}
+              </div>
               {r?.loading && <div className="loading">번역 중...</div>}
               {r?.error && <div className="error">오류: {r.error}</div>}
               {r?.translated && (
