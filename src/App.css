@@ -22,6 +22,13 @@
   border-color: #2f5fdb;
 }
 
+.view .name-input {
+  width: 100%;
+  font-size: 14px;
+  padding: 8px;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+}
 .view textarea {
   width: 100%;
   font-size: 15px;
@@ -69,6 +76,16 @@
 }
 .question-list .original {
   font-size: 14px;
+}
+.question-list .student-name {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #2f5fdb;
+  background: #eaf0ff;
+  border-radius: 4px;
+  padding: 1px 6px;
+  margin-right: 6px;
 }
 .question-list .loading {
   font-size: 12px;
