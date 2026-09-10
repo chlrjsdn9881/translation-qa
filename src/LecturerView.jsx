@@ -27,7 +27,7 @@ export default function LecturerView() {
     <div className="view">
       <h2>강의자 화면</h2>
       {!isBuiltInAIAvailable() && (
-        <p className="warn">이 브라우저는 Chrome 내장 AI를 지원하지 않습니다 (최신 Chrome 필요).</p>
+        <p className="warn">Gemini API 키가 설정되지 않았습니다 (.env 파일 확인 필요).</p>
       )}
       <p className="hint">질문을 더블클릭하면 번역 + 키워드가 표시됩니다.</p>
       <ul className="question-list">

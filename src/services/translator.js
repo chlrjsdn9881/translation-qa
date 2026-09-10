@@ -1,36 +1,44 @@
-// Chrome 내장 AI(Gemini Nano) 기반 번역 + 키워드 추출.
-// 강의자 PC의 Chrome에서만 동작합니다 (chrome://on-device-internals 에서 모델 상태 확인 가능).
+// Gemini API로 번역 + 키워드 추출.
+// Cloud Translation API는 결제 계정이 필요해서, 결제 없이 무료로 쓸 수 있는
+// Gemini API(AI Studio 키)로 번역과 키워드 추출을 한 번에 처리합니다.
+
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const MODEL = 'gemini-3.5-flash-lite';
+const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
 
 export function isBuiltInAIAvailable() {
-  return 'Translator' in self && 'LanguageModel' in self;
+  return Boolean(API_KEY);
 }
 
-// 다운로드 진행률을 onProgress(percent)로 알려줌 (선택)
-function withProgress(onProgress) {
-  if (!onProgress) return undefined;
-  return (monitor) => {
-    monitor.addEventListener('downloadprogress', (e) => {
-      onProgress(Math.round(e.loaded * 100));
-    });
-  };
-}
-
-export async function translateAndExtractKeywords(text, { onProgress } = {}) {
-  if (!isBuiltInAIAvailable()) {
-    throw new Error('이 브라우저는 Chrome 내장 AI를 지원하지 않습니다. 최신 Chrome에서 실행해주세요.');
+export async function translateAndExtractKeywords(text) {
+  if (!API_KEY) {
+    throw new Error('Gemini API 키가 설정되지 않았습니다. .env 파일에 VITE_GEMINI_API_KEY를 추가해주세요.');
   }
 
-  const translator = await Translator.create({
-    sourceLanguage: 'en',
-    targetLanguage: 'ko',
-    monitor: withProgress(onProgress),
+  const prompt =
+    `다음 문장을 한국어로 번역하고, 핵심 키워드를 한국어로 1~2개만 뽑아줘.\n` +
+    `다른 설명 없이 반드시 아래 JSON 형식으로만 답해:\n` +
+    `{"translated": "번역 결과", "keywords": "키워드1, 키워드2"}\n\n` +
+    `문장: "${text}"`;
+
+  const res = await fetch(`${ENDPOINT}?key=${API_KEY}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { responseMimeType: 'application/json' },
+    }),
   });
-  const translated = await translator.translate(text);
 
-  const session = await LanguageModel.create({ monitor: withProgress(onProgress) });
-  const keywordPrompt =
-    `다음 문장에서 핵심 키워드를 한국어로 1~2개만 뽑아서 쉼표로 구분해 답해줘. 다른 설명은 붙이지 마.\n\n문장: "${text}"`;
-  const keywords = await session.prompt(keywordPrompt);
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Gemini API 오류 (${res.status}): ${errText}`);
+  }
 
-  return { translated, keywords: keywords.trim() };
+  const data = await res.json();
+  const raw = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!raw) throw new Error('Gemini 응답을 파싱할 수 없습니다.');
+
+  const parsed = JSON.parse(raw);
+  return { translated: parsed.translated, keywords: parsed.keywords };
 }
