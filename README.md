@@ -52,4 +52,7 @@ Vercel 프로젝트 설정 → Environment Variables 에 `VITE_GEMINI_API_KEY` �
 
 - 강의자 답변을 학생 언어로 재번역하는 기능 없음 (범위 밖)
 - 학생 구분: 완전 익명 vs 익명 태그 — 미정 (`sessionId`만 저장 중)
-- 연속 전송 쿨타임: 현재 미구현 — Security Rules 또는 클라이언트에서 추가 필요
+
+## 완료
+
+- 연속 전송 쿨타임: 전송 후 10초간 버튼 비활성화 (클라이언트 사이드, `localStorage` 기반이라 새로고침해도 유지됨)
