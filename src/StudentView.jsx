@@ -1,11 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  sendQuestion,
-  QUESTION_MAX_LENGTH,
-  NAME_INPUT_MAX_LENGTH,
-  getStoredName,
-  setStoredName,
-} from './services/questionRepository';
+import { sendQuestion, QUESTION_MAX_LENGTH, NAME_INPUT_MAX_LENGTH } from './services/questionRepository';
 
 const COOLDOWN_SECONDS = 10;
 const LAST_SENT_KEY = 'lastQuestionSentAt';
@@ -18,7 +12,7 @@ function remainingCooldown() {
 
 export default function StudentView() {
   const [text, setText] = useState('');
-  const [name, setName] = useState(getStoredName);
+  const [name, setName] = useState('');
   const [sent, setSent] = useState(false);
   const [cooldown, setCooldown] = useState(remainingCooldown);
   const intervalRef = useRef(null);
@@ -33,7 +27,6 @@ export default function StudentView() {
   async function handleSend() {
     if (!text.trim() || cooldown > 0) return;
     await sendQuestion(text, name);
-    setStoredName(name);
     localStorage.setItem(LAST_SENT_KEY, String(Date.now()));
     setText('');
     setSent(true);

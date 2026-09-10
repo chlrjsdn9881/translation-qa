@@ -4,7 +4,6 @@ import { ref, push, onChildAdded, serverTimestamp, query, limitToLast } from 'fi
 const QUESTIONS_PATH = 'questions';
 const MAX_LENGTH = 300;
 const NAME_MAX_LENGTH = 30;
-const NAME_KEY = 'studentName';
 
 function getSessionId() {
   let id = localStorage.getItem('sessionId');
@@ -13,15 +12,6 @@ function getSessionId() {
     localStorage.setItem('sessionId', id);
   }
   return id;
-}
-
-// 학생 화면에서 호출 — 마지막으로 입력했던 이름 불러오기/저장 (매번 다시 입력 안 해도 되게)
-export function getStoredName() {
-  return localStorage.getItem(NAME_KEY) || '';
-}
-
-export function setStoredName(name) {
-  localStorage.setItem(NAME_KEY, name.trim().slice(0, NAME_MAX_LENGTH));
 }
 
 // 학생 화면에서 호출 — 질문 전송

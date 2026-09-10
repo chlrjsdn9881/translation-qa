@@ -38,8 +38,10 @@ src/
     translator.js        — Gemini API로 번역 + 키워드 추출 (VITE_GEMINI_API_KEY 필요)
   StudentView.jsx        — 학생 화면 (질문 입력)
   LecturerView.jsx       — 강의자 화면 (질문 목록 + 번역)
-  App.jsx                — 화면 전환(프로토타입용 — 실제로는 URL/역할로 분리 예정)
+  App.jsx                — 경로 분기: "/" 학생 화면, "/lecturer" 강의자 화면
 ```
+
+학생 화면과 강의자 화면은 URL로 분리되어 있습니다 (학생이 다른 학생 질문을 볼 수 없도록). 강의자 전용 링크는 배포 주소 뒤에 `/lecturer`를 붙여서 접속하세요 (예: `https://translation-qa-chi.vercel.app/lecturer`).
 
 ## 배포 (Vercel)
 

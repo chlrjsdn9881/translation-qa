@@ -5,23 +5,6 @@
   font-family: system-ui, sans-serif;
 }
 
-.mode-switch {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 24px;
-}
-.mode-switch button {
-  padding: 8px 16px;
-  border: 1px solid #ccc;
-  background: #f4f4f4;
-  cursor: pointer;
-}
-.mode-switch button.active {
-  background: #2f5fdb;
-  color: #fff;
-  border-color: #2f5fdb;
-}
-
 .view .name-input {
   width: 100%;
   font-size: 14px;
