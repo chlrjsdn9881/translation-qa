@@ -2,16 +2,26 @@ import { useEffect, useState } from 'react';
 import { subscribeToQuestions, deleteQuestion, clearAllQuestions } from './services/questionRepository';
 import { translateAndExtractKeywords, isBuiltInAIAvailable } from './services/translator';
 
-export default function LecturerView() {
+export default function LecturerView({ room }) {
   const [questions, setQuestions] = useState([]);
   const [results, setResults] = useState({}); // id -> { translated, keywords, loading, error }
+  const [copied, setCopied] = useState(false);
+
+  // 학생에게 안내할 주소 — 같은 수업 코드를 붙인 학생 화면
+  const studentUrl = `${window.location.origin}/?room=${room}`;
 
   useEffect(() => {
-    const unsubscribe = subscribeToQuestions((q) => {
+    const unsubscribe = subscribeToQuestions(room, (q) => {
       setQuestions((prev) => [q, ...prev]);
     });
     return unsubscribe;
-  }, []);
+  }, [room]);
+
+  async function handleCopy() {
+    await navigator.clipboard.writeText(studentUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
 
   async function handleDoubleClick(question) {
     setResults((prev) => ({ ...prev, [question.id]: { loading: true } }));
@@ -24,7 +34,7 @@ export default function LecturerView() {
   }
 
   async function handleDelete(id) {
-    await deleteQuestion(id);
+    await deleteQuestion(room, id);
     setQuestions((prev) => prev.filter((q) => q.id !== id));
     setResults((prev) => {
       const next = { ...prev };
@@ -35,7 +45,7 @@ export default function LecturerView() {
 
   async function handleClearAll() {
     if (!window.confirm('질문을 전부 삭제할까요? 되돌릴 수 없습니다.')) return;
-    await clearAllQuestions();
+    await clearAllQuestions(room);
     setQuestions([]);
     setResults({});
   }
@@ -47,6 +57,10 @@ export default function LecturerView() {
         {questions.length > 0 && (
           <button className="clear-all" onClick={handleClearAll}>전체 삭제</button>
         )}
+      </div>
+      <div className="room-info">
+        <span>수업 코드 <strong>{room}</strong> · 학생용 주소: {studentUrl}</span>
+        <button onClick={handleCopy}>{copied ? '복사됨' : '주소 복사'}</button>
       </div>
       {!isBuiltInAIAvailable() && (
         <p className="warn">Gemini API 키가 설정되지 않았습니다 (.env 파일 확인 필요).</p>
