@@ -10,7 +10,7 @@ function remainingCooldown() {
   return Math.max(0, Math.ceil(COOLDOWN_SECONDS - elapsed));
 }
 
-export default function StudentView() {
+export default function StudentView({ room }) {
   const [text, setText] = useState('');
   const [name, setName] = useState('');
   const [sent, setSent] = useState(false);
@@ -26,7 +26,7 @@ export default function StudentView() {
 
   async function handleSend() {
     if (!text.trim() || cooldown > 0) return;
-    await sendQuestion(text, name);
+    await sendQuestion(room, text, name);
     localStorage.setItem(LAST_SENT_KEY, String(Date.now()));
     setText('');
     setSent(true);
@@ -36,9 +36,19 @@ export default function StudentView() {
 
   const disabled = !text.trim() || cooldown > 0;
 
+  if (!room) {
+    return (
+      <div className="view">
+        <h2>학생 화면</h2>
+        <p className="warn">수업 코드가 없습니다. 강의자가 안내한 주소로 접속해 주세요.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="view">
       <h2>학생 화면</h2>
+      <p className="hint">수업 코드: {room}</p>
       <input
         type="text"
         className="name-input"

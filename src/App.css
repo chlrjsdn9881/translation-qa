@@ -22,6 +22,21 @@
   background: #fde8e8;
 }
 
+.room-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #444;
+  word-break: break-all;
+}
+.room-info button {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
 .view .name-input {
   width: 100%;
   font-size: 14px;
