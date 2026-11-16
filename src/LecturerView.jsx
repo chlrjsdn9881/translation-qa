@@ -1,11 +1,27 @@
 import { useEffect, useState } from 'react';
 import { subscribeToQuestions, deleteQuestion, clearAllQuestions } from './services/questionRepository';
-import { translateAndExtractKeywords, isBuiltInAIAvailable } from './services/translator';
+import { translateAndExtractKeywords } from './services/translator';
 import { findClass } from './config/classes';
 import ClassSelect from './ClassSelect';
 import { useSelectedClass } from './useSelectedClass';
+import { useLecturerKey } from './useLecturerKey';
 
+// 강의자용 QR코드/주소(?key=)로 들어온 경우에만 질문 목록을 보여줌
 export default function LecturerView() {
+  const { checking, key } = useLecturerKey();
+  if (checking) return null;
+  if (!key) {
+    return (
+      <div className="view">
+        <h2>강의자 화면</h2>
+        <p className="warn">강의자용 QR코드나 주소로 접속해 주세요.</p>
+      </div>
+    );
+  }
+  return <LecturerQuestions lecturerKey={key} />;
+}
+
+function LecturerQuestions({ lecturerKey }) {
   const [classId, setClassId] = useSelectedClass('lecturerClass');
   const [questions, setQuestions] = useState([]);
   const [results, setResults] = useState({}); // id -> { translated, keywords, loading, error }
@@ -28,7 +44,7 @@ export default function LecturerView() {
   async function handleDoubleClick(question) {
     setResults((prev) => ({ ...prev, [question.id]: { loading: true } }));
     try {
-      const { translated, keywords } = await translateAndExtractKeywords(question.text);
+      const { translated, keywords } = await translateAndExtractKeywords(question.text, lecturerKey);
       setResults((prev) => ({ ...prev, [question.id]: { translated, keywords, loading: false } }));
     } catch (e) {
       setResults((prev) => ({ ...prev, [question.id]: { error: e.message, loading: false } }));
@@ -61,9 +77,6 @@ export default function LecturerView() {
         )}
       </div>
       <ClassSelect value={classId} onChange={handleClassChange} />
-      {!isBuiltInAIAvailable() && (
-        <p className="warn">Gemini API 키가 설정되지 않았습니다 (.env 파일 확인 필요).</p>
-      )}
       <p className="hint">질문을 더블클릭하면 번역 + 키워드가 표시됩니다.</p>
       <ul className="question-list">
         {questions.map((q) => {
