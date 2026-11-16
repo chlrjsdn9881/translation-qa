@@ -13,7 +13,7 @@ function remainingCooldown() {
 }
 
 export default function StudentView() {
-  const [classId, setClassId] = useSelectedClass('studentClass');
+  const [classId, setClassId] = useSelectedClass();
   const [text, setText] = useState('');
   const [name, setName] = useState('');
   const [sent, setSent] = useState(false);
