@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { sendQuestion, QUESTION_MAX_LENGTH, NAME_INPUT_MAX_LENGTH } from './services/questionRepository';
+import ClassSelect from './ClassSelect';
+import { useSelectedClass } from './useSelectedClass';
 
 const COOLDOWN_SECONDS = 10;
 const LAST_SENT_KEY = 'lastQuestionSentAt';
@@ -11,6 +13,7 @@ function remainingCooldown() {
 }
 
 export default function StudentView() {
+  const [classId, setClassId] = useSelectedClass('studentClass');
   const [text, setText] = useState('');
   const [name, setName] = useState('');
   const [sent, setSent] = useState(false);
@@ -25,8 +28,8 @@ export default function StudentView() {
   }, []);
 
   async function handleSend() {
-    if (!text.trim() || cooldown > 0) return;
-    await sendQuestion(text, name);
+    if (!classId || !text.trim() || cooldown > 0) return;
+    await sendQuestion(classId, text, name);
     localStorage.setItem(LAST_SENT_KEY, String(Date.now()));
     setText('');
     setSent(true);
@@ -34,11 +37,12 @@ export default function StudentView() {
     setCooldown(COOLDOWN_SECONDS);
   }
 
-  const disabled = !text.trim() || cooldown > 0;
+  const disabled = !classId || !text.trim() || cooldown > 0;
 
   return (
     <div className="view">
       <h2>학생 화면</h2>
+      <ClassSelect value={classId} onChange={setClassId} />
       <input
         type="text"
         className="name-input"
@@ -58,6 +62,7 @@ export default function StudentView() {
       <button onClick={handleSend} disabled={disabled}>
         {cooldown > 0 ? `${cooldown}초 후 전송 가능` : '전송'}
       </button>
+      {!classId && <p className="hint">수업을 먼저 선택해야 질문을 보낼 수 있습니다.</p>}
       {sent && <p className="sent-feedback">전송됨</p>}
     </div>
   );

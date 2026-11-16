@@ -6,6 +6,18 @@
       "$questionId": {
         ".validate": "newData.hasChildren(['text','timestamp','sessionId']) && newData.child('text').isString() && newData.child('text').val().length <= 300"
       }
+    },
+    "classes": {
+      "$classId": {
+        ".validate": "$classId.matches(/^class[1-5]$/)",
+        "questions": {
+          ".read": true,
+          ".write": true,
+          "$questionId": {
+            ".validate": "newData.hasChildren(['className','text','timestamp','sessionId']) && newData.child('className').isString() && newData.child('className').val().length <= 50 && newData.child('text').isString() && newData.child('text').val().length <= 300"
+          }
+        }
+      }
     }
   }
 }

@@ -1,17 +1,29 @@
 import { useEffect, useState } from 'react';
 import { subscribeToQuestions, deleteQuestion, clearAllQuestions } from './services/questionRepository';
 import { translateAndExtractKeywords, isBuiltInAIAvailable } from './services/translator';
+import { findClass } from './config/classes';
+import ClassSelect from './ClassSelect';
+import { useSelectedClass } from './useSelectedClass';
 
 export default function LecturerView() {
+  const [classId, setClassId] = useSelectedClass('lecturerClass');
   const [questions, setQuestions] = useState([]);
   const [results, setResults] = useState({}); // id -> { translated, keywords, loading, error }
 
+  // 선택한 수업의 질문만 구독 — 수업을 바꾸면 이전 수업 구독은 해제됨
   useEffect(() => {
-    const unsubscribe = subscribeToQuestions((q) => {
+    if (!classId) return undefined;
+    const unsubscribe = subscribeToQuestions(classId, (q) => {
       setQuestions((prev) => [q, ...prev]);
     });
     return unsubscribe;
-  }, []);
+  }, [classId]);
+
+  function handleClassChange(id) {
+    setQuestions([]);
+    setResults({});
+    setClassId(id);
+  }
 
   async function handleDoubleClick(question) {
     setResults((prev) => ({ ...prev, [question.id]: { loading: true } }));
@@ -24,7 +36,7 @@ export default function LecturerView() {
   }
 
   async function handleDelete(id) {
-    await deleteQuestion(id);
+    await deleteQuestion(classId, id);
     setQuestions((prev) => prev.filter((q) => q.id !== id));
     setResults((prev) => {
       const next = { ...prev };
@@ -34,8 +46,8 @@ export default function LecturerView() {
   }
 
   async function handleClearAll() {
-    if (!window.confirm('질문을 전부 삭제할까요? 되돌릴 수 없습니다.')) return;
-    await clearAllQuestions();
+    if (!window.confirm(`'${findClass(classId).name}' 질문을 전부 삭제할까요? 되돌릴 수 없습니다.`)) return;
+    await clearAllQuestions(classId);
     setQuestions([]);
     setResults({});
   }
@@ -48,6 +60,7 @@ export default function LecturerView() {
           <button className="clear-all" onClick={handleClearAll}>전체 삭제</button>
         )}
       </div>
+      <ClassSelect value={classId} onChange={handleClassChange} />
       {!isBuiltInAIAvailable() && (
         <p className="warn">Gemini API 키가 설정되지 않았습니다 (.env 파일 확인 필요).</p>
       )}
@@ -82,7 +95,8 @@ export default function LecturerView() {
             </li>
           );
         })}
-        {questions.length === 0 && <li className="empty">아직 들어온 질문이 없습니다.</li>}
+        {!classId && <li className="empty">수업을 선택하면 그 수업의 질문이 표시됩니다.</li>}
+        {classId && questions.length === 0 && <li className="empty">아직 들어온 질문이 없습니다.</li>}
       </ul>
     </div>
   );
