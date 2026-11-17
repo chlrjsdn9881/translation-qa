@@ -6,7 +6,7 @@
 // 맞춰야 하므로 바꾸지 않는다.
 export const CLASSES = [
   { id: 'class1', name: '데이터베이스', en: 'Database (데이터베이스)' },
-  { id: 'class2', name: '수업 2', en: 'Class 2' },
+  { id: 'class2', name: '순천대-연구방법론', en: 'Sunchon Univ. - Research Methodology (순천대-연구방법론)' },
   { id: 'class3', name: '수업 3', en: 'Class 3' },
   { id: 'class4', name: '수업 4', en: 'Class 4' },
   { id: 'class5', name: '수업 5', en: 'Class 5' },
