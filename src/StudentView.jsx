@@ -41,29 +41,29 @@ export default function StudentView() {
 
   return (
     <div className="view">
-      <h2>학생 화면</h2>
-      <ClassSelect value={classId} onChange={setClassId} />
+      <h2>Ask a Question</h2>
+      <ClassSelect value={classId} onChange={setClassId} english />
       <input
         type="text"
         className="name-input"
         value={name}
         maxLength={NAME_INPUT_MAX_LENGTH}
         onChange={(e) => setName(e.target.value)}
-        placeholder="이름 (선택)"
+        placeholder="Name (optional)"
       />
       <textarea
         value={text}
         maxLength={QUESTION_MAX_LENGTH}
         onChange={(e) => setText(e.target.value)}
-        placeholder="질문을 입력하세요 (모국어로 입력해도 됩니다)"
+        placeholder="Type your question (you can write in your own language)"
         rows={4}
       />
       <div className="counter">{text.length} / {QUESTION_MAX_LENGTH}</div>
       <button onClick={handleSend} disabled={disabled}>
-        {cooldown > 0 ? `${cooldown}초 후 전송 가능` : '전송'}
+        {cooldown > 0 ? `You can send again in ${cooldown}s` : 'Send'}
       </button>
-      {!classId && <p className="hint">수업을 먼저 선택해야 질문을 보낼 수 있습니다.</p>}
-      {sent && <p className="sent-feedback">전송됨</p>}
+      {!classId && <p className="hint">Please select your class before sending a question.</p>}
+      {sent && <p className="sent-feedback">Sent!</p>}
     </div>
   );
 }
