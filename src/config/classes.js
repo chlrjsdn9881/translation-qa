@@ -4,7 +4,7 @@
 // id는 Firebase 경로(classes/{id}/questions)로 쓰이고 보안 규칙의 허용 목록(class1~class5)과
 // 맞춰야 하므로 바꾸지 않는다.
 export const CLASSES = [
-  { id: 'class1', name: '수업 1', en: 'Class 1' },
+  { id: 'class1', name: '데이터베이스', en: 'Database' },
   { id: 'class2', name: '수업 2', en: 'Class 2' },
   { id: 'class3', name: '수업 3', en: 'Class 3' },
   { id: 'class4', name: '수업 4', en: 'Class 4' },
