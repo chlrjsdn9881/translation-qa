@@ -34,11 +34,16 @@ export async function sendQuestion(classId, text, name) {
 }
 
 // 강의자 화면에서 호출 — 선택한 수업에 새 질문이 생길 때마다 callback(question) 실행
-export function subscribeToQuestions(classId, callback) {
+// onError: 권한 거부·연결 오류로 목록을 받지 못할 때 호출
+export function subscribeToQuestions(classId, callback, onError) {
   const recentQuery = query(ref(db, questionsPath(classId)), limitToLast(50));
-  const unsubscribe = onChildAdded(recentQuery, (snapshot) => {
-    callback({ id: snapshot.key, ...snapshot.val() });
-  });
+  const unsubscribe = onChildAdded(
+    recentQuery,
+    (snapshot) => {
+      callback({ id: snapshot.key, ...snapshot.val() });
+    },
+    (error) => onError?.(error),
+  );
   return unsubscribe; // 화면이 사라지거나 수업을 바꿀 때 unsubscribe() 호출해서 구독 해제
 }
 

@@ -17,6 +17,8 @@ export default function StudentView() {
   const [text, setText] = useState('');
   const [name, setName] = useState('');
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [failed, setFailed] = useState(false);
   const [cooldown, setCooldown] = useState(remainingCooldown);
   const intervalRef = useRef(null);
 
@@ -28,8 +30,18 @@ export default function StudentView() {
   }, []);
 
   async function handleSend() {
-    if (!classId || !text.trim() || cooldown > 0) return;
-    await sendQuestion(classId, text, name);
+    if (!classId || !text.trim() || cooldown > 0 || sending) return;
+    setSending(true);
+    setFailed(false);
+    try {
+      await sendQuestion(classId, text, name);
+    } catch {
+      // 저장이 거부되거나(예: 오래 열어 둔 화면) 연결 오류가 나면 질문을 그대로 두고 안내
+      setFailed(true);
+      return;
+    } finally {
+      setSending(false);
+    }
     localStorage.setItem(LAST_SENT_KEY, String(Date.now()));
     setText('');
     setSent(true);
@@ -37,7 +49,7 @@ export default function StudentView() {
     setCooldown(COOLDOWN_SECONDS);
   }
 
-  const disabled = !classId || !text.trim() || cooldown > 0;
+  const disabled = !classId || !text.trim() || cooldown > 0 || sending;
 
   return (
     <div className="view">
@@ -64,6 +76,7 @@ export default function StudentView() {
       </button>
       {!classId && <p className="hint">Please select your class before sending a question.</p>}
       {sent && <p className="sent-feedback">Sent!</p>}
+      {failed && <p className="warn">Could not send your question. Please refresh the page and try again.</p>}
     </div>
   );
 }

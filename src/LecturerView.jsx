@@ -25,19 +25,23 @@ function LecturerQuestions({ lecturerKey }) {
   const [classId, setClassId] = useSelectedClass('lecturerClass');
   const [questions, setQuestions] = useState([]);
   const [results, setResults] = useState({}); // id -> { translated, keywords, loading, error }
+  const [loadError, setLoadError] = useState(false);
 
   // 선택한 수업의 질문만 구독 — 수업을 바꾸면 이전 수업 구독은 해제됨
   useEffect(() => {
     if (!classId) return undefined;
-    const unsubscribe = subscribeToQuestions(classId, (q) => {
-      setQuestions((prev) => [q, ...prev]);
-    });
+    const unsubscribe = subscribeToQuestions(
+      classId,
+      (q) => setQuestions((prev) => [q, ...prev]),
+      () => setLoadError(true),
+    );
     return unsubscribe;
   }, [classId]);
 
   function handleClassChange(id) {
     setQuestions([]);
     setResults({});
+    setLoadError(false);
     setClassId(id);
   }
 
@@ -77,6 +81,7 @@ function LecturerQuestions({ lecturerKey }) {
         )}
       </div>
       <ClassSelect value={classId} onChange={handleClassChange} />
+      {loadError && <p className="warn">질문 목록을 불러오지 못했습니다. 페이지를 새로고침해 주세요.</p>}
       <p className="hint">질문을 더블클릭하면 번역 + 키워드가 표시됩니다.</p>
       <ul className="question-list">
         {questions.map((q) => {
